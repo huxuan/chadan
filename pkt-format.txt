@@ -1,0 +1,37 @@
+查询账户资金：
+http://www.chadan.cn/user/getBalance
+post：
+JSESSIONID  1a980de0-0261-44fd-ae28-906e9278cc42
+return
+{
+"errorMsg":"OK",
+"data":{
+	"userId":64967,
+	"balance":0.0000,
+	"freezeBalance":null,
+	"deposit":0.0000,
+	"accumulationFace":6840,
+	"rebate":0.00,
+	"freezeRebate":null,
+	"adminUpdateFace":0,
+	"manualFreeze":null,
+	"accumulationRebate":0.0000,
+	"userNo":"15359190337",
+	"userLevel":3},
+"errorCode":200
+}
+
+
+
+提现操作：
+http://www.chadan.cn/withdraw/withdrawApply
+post：
+JSESSIONID	09798c64-cc18-40f7-bd25-f0ff7debd8fd
+certificationId	97340
+withdrawType	1
+price	58.85
+return
+JSON
+errorCode=200
+errorMsg=请求通过
+expire=(null)
