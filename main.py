@@ -5,6 +5,7 @@ from selenium import webdriver
 from chadan import chadan_cls
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 import sys
 from chadanui import Ui_Dialog
 
@@ -15,11 +16,12 @@ class mywindow(QtWidgets.QWidget,Ui_Dialog):
 
         self.startButton.clicked.connect(self.startChadan)
         self.stopButton.clicked.connect(self.stopChadan)
+        self.Button_get_cash.clicked.connect(self.get_cash)
 
     def keyPressEvent(self, e):
         print('e.key() ={}'.format(e.key()))
         print('Qt.Key_Enter = {}'.format(Qt.Key_Enter))
-        if e.key() == Qt.Key_Return:
+        if (e.key() == Qt.Key_Return) | (e.key() == Qt.Key_Enter):
             # print('test')
             self.startChadan()
 
@@ -42,6 +44,12 @@ class mywindow(QtWidgets.QWidget,Ui_Dialog):
         self.dan_statu.setText('未启动')
         self.dan_info_phone.setText('null')
         # self.dan_info_deadtime.setText('')
+
+    def get_cash(self):
+        if self.chadan_obj.withdrawApply():
+            QMessageBox.information(self, "消息", "提现成功", QMessageBox.Yes)
+        else:
+            QMessageBox.information(self, "消息", "提现失败", QMessageBox.Yes)
 
 if __name__=="__main__":
     app=QtWidgets.QApplication(sys.argv)

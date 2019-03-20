@@ -15,6 +15,9 @@ class chadan_cls:
         self.webdriver = webdriver
         self.operator = 'UNICOM'
         self.loopStatu = False
+        self.certificationId = '97340'
+        self.balance = 0
+        self.orderId = ''
 
     def login(self, window, account, password):
         print('Try to login with {}:{}'.format(account,password))
@@ -48,6 +51,36 @@ class chadan_cls:
             msg = traceback.format_exc()
             print (msg)
         self.t.start()
+
+    def getBalance(self, window):
+        post_url = 'http://www.chadan.cn/user/getBalance'
+        test_data ={'JSESSIONID' : self.logged}
+        response = self.req.post(post_url,data=test_data)
+        if response.status_code != 200:
+            # print('response.status_code = {}'.format(response.status_code))
+            return 0
+
+        # print('response.text : {}'.format(response.text))
+        try :
+            resp_json = json.loads(response.text)
+        except BaseException as e:
+            # print('response.text : {}'.format(response.text))
+            msg = traceback.format_exc()
+            # print(msg)
+            # if 'errorMsg' not in resp_json:
+            #     print('resp_json:{}'.format(resp_json))
+            #     return False
+        if resp_json['errorMsg'] == 'OK':
+            # print('data = {}'.format(resp_json['data']))
+            data_in_response = resp_json['data']
+            # print(type(data_in_response))
+            # print(data_in_response)
+            if len(data_in_response):
+                # print(type(data_in_response['balance']))
+                # print(data_in_response['balance'])
+                self.balance = data_in_response['balance']
+                return data_in_response['balance']
+        return 0
 
     def get_dan(self, window, operator, num):
         post_url = 'http://api.chadan.wang/order/getOrderdd623299'
@@ -83,6 +116,7 @@ class chadan_cls:
                 print(type(data_in_response[0]))
                 print(data_in_response[0])
                 window.dan_statu.setText('成功')
+                self.orderId = data_in_response[0]['id']
                 print(data_in_response[0]['rechargeAccount'])
                 print(data_in_response[0]['cutOffTime'])
                 window.dan_info_phone.setText('手机号码：' + data_in_response[0]['rechargeAccount'][0:3] + '-' + data_in_response[0]['rechargeAccount'][3:7] +'-'+ data_in_response[0]['rechargeAccount'][7:11])
@@ -96,6 +130,11 @@ class chadan_cls:
             # print('Try to get {} {} {}dan'.format(arg,arg2,arg3))
             time.sleep(0.25)
             if self.loopStatu == False:
+                self.balance = self.getBalance(window)
+                # print(blance)
+                if self.balance > 0:
+                    self.withdrawApply()
+                # window.cash.setText(str(blance))
                 print('Stop!')
                 continue
             else:
@@ -128,6 +167,9 @@ class chadan_cls:
 
     def startdan(self):
         self.loopStatu = True
+        # 启动个2分钟的计时器，自动提交订单
+        # time.sleep(120)
+        # self.commitdan()
 
     def stopdan(self):
         self.loopStatu = False
@@ -136,9 +178,23 @@ class chadan_cls:
         post_url = 'http://www.chadan.cn/order/confirmOrderdd623299'
         test_data ={'JSESSIONID' : self.logged,
                     'id' : self.orderId,
-                    'orderStatus':''}
+                    'orderStatus':1,
+                    'submitRemark':''}
         # print('Try to get {} {}...'.format(operator, num))
         response = self.req.post(post_url,data=test_data)
+        if response.status_code != 200:
+            print('response.status_code = {}'.format(response.status_code))
+            return False
+        return True
+
+    def withdrawApply(self):
+        post_url = 'http://www.chadan.cn/withdraw/withdrawApply'
+        test_data = {'JSESSIONID': self.logged,
+                     'certificationId': self.certificationId,
+                     'withdrawType': 1,
+                     'price': self.balance}
+        # print('Try to get {} {}...'.format(operator, num))
+        response = self.req.post(post_url, data=test_data)
         if response.status_code != 200:
             print('response.status_code = {}'.format(response.status_code))
             return False
