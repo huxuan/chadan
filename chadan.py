@@ -174,7 +174,7 @@ class chadan_cls:
     def stopdan(self):
         self.loopStatu = False
 
-    def commitdan(self):
+    def confirmdan(self):
         post_url = 'http://www.chadan.cn/order/confirmOrderdd623299'
         test_data ={'JSESSIONID' : self.logged,
                     'id' : self.orderId,

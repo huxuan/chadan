@@ -17,6 +17,7 @@ class mywindow(QtWidgets.QWidget,Ui_Dialog):
         self.startButton.clicked.connect(self.startChadan)
         self.stopButton.clicked.connect(self.stopChadan)
         self.Button_get_cash.clicked.connect(self.get_cash)
+        self.Button_commit.clicked.connect(self.commitdan)
 
     def keyPressEvent(self, e):
         print('e.key() ={}'.format(e.key()))
@@ -44,6 +45,9 @@ class mywindow(QtWidgets.QWidget,Ui_Dialog):
         self.dan_statu.setText('未启动')
         self.dan_info_phone.setText('null')
         # self.dan_info_deadtime.setText('')
+
+    def commitdan(self):
+        self.chadan_obj.confirmdan()
 
     def get_cash(self):
         if self.chadan_obj.withdrawApply():
